@@ -1,15 +1,6 @@
-//STREAM:: conseguir ler pequenas partes de alguma coisa (como filmes e músicas) e já trabalhar com os dados antes que seja carregado como completo, como Netflix ou Spotify
+import { Readable, Writable, Transform } from 'node:stream'
 
-//readable stream: lendo um arquivo aos poucos
-//writable stream: escrevendo as informações de um arquivo aos poucos
-
-//toda porta de entrada e saída é automaticamente uma stream, como o req e res
-
-//stdin:: tudo o que o usuário digita no terminal
-
-//CONSTRUINDO UMA STREAM DE LEITURA
-import { Readable } from 'node:stream'
-
+//CRIANDO STREAM DE LEITURA
 class OneToHundredStream extends Readable {
     index = 1
 
@@ -28,4 +19,28 @@ class OneToHundredStream extends Readable {
     }
 }
 
-new OneToHundredStream().pipe(process.stdout)
+//CRIANDO STREAM DE TRANSOFMRAÇÃO
+class InverseNumberStream extends Transform {
+    _transform(chunk, encoding, callback) {
+        const transformed = Number(chunk.toString()) * -1
+        callback(null, Buffer.from(String(transformed)))
+    }
+}
+
+//CRIANDO STREAM DE ESCRITA:: recebe dados da stream de leitura e faz algo com os dados
+class MultiplyByTenStream extends Writable {
+    /**
+     * 
+     * @param {*} chunck -> pedaço lido enviado pelo this.push
+     * @param {*} encoding -> como a informação está codificada
+     * @param {*} callback -> função que a stream de escrita chama quando ela termina de fazer o que tinha que fazer com a informação
+     */
+    _write(chunck, encoding, callback) {
+        console.log(Number(chunck.toString()) * 10)
+        callback()
+    }
+}
+
+new OneToHundredStream()
+    .pipe(new InverseNumberStream)
+    .pipe(new MultiplyByTenStream)

@@ -78,6 +78,7 @@ As streams permitem processar dados de forma contínua, lendo ou escrevendo em p
 
 - Readable Stream → Permite ler um arquivo aos poucos.
 - Writable Stream → Permite escrever informações em um arquivo de forma progressiva.
+- Transform Stream → Transforma um dado (chunk) em outro
 Todas as portas de entrada e saída são automaticamente streams, como req e res em aplicações web.
 
 **Exemplos de Streams**
