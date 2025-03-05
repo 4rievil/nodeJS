@@ -1,23 +1,26 @@
 import http from 'node:http'
+import { json } from './middlewares/json.js'
 
 const users = []
 //CRIANDO FUNÇÃO HTTP
 //request(req):: obtém acesso todas informações da requisições que estão chegando no servidor
 //response(res):: devolve uma resposta para quem está chamando o servidor
-const server = http.createServer((req, res) => {
+const server = http.createServer(async (req, res) => {
     const { method, url } = req
+
+    await json(req, res)
 
     if (method == 'GET' && url == '/users') {
         return res
-            .setHeader('Content-type', 'application/json')
             .end(JSON.stringify(users))
     }
 
     if (method == 'POST' && url == '/users') {
+        const { name, email } = req.body
         users.push({
             id: 1,
-            name: 'Jane Doe',
-            email: 'janedoe@exemple.com'
+            name,
+            email,
         })
         return res.writeHead(201).end()
     }
